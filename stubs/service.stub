@@ -1,0 +1,40 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Repositories\{{ ModelName }}Repository;
+
+class {{ class }}
+{
+    protected ${{ variableName }}Repository;
+
+    public function __construct({{ ModelName }}Repository ${{ variableName }}Repository)
+    {
+        $this->{{ variableName }}Repository = ${{ variableName }}Repository;
+    }
+
+    public function getAll()
+    {
+        return $this->{{ variableName }}Repository->getAll();
+    }
+
+    public function getById($id)
+    {
+        return $this->{{ variableName }}Repository->findById($id);
+    }
+
+    public function create(array $data)
+    {
+        return $this->{{ variableName }}Repository->create($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->{{ variableName }}Repository->update($data, $id);
+    }
+
+    public function delete($id)
+    {
+        return $this->{{ variableName }}Repository->delete($id);
+    }
+}

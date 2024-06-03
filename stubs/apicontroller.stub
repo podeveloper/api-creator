@@ -1,0 +1,48 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\{{ ModelName }}Request;
+use App\Http\Resources\{{ ModelName }}Resource;
+use App\Services\{{ ModelName }}Service;
+
+class {{ class }} extends Controller
+{
+    protected ${{ variableName }}Service;
+
+    public function __construct({{ ModelName }}Service ${{ variableName }}Service)
+    {
+        $this->{{ variableName }}Service = ${{ variableName }}Service;
+    }
+
+    public function index()
+    {
+        ${{ variableName }}s = $this->{{ variableName }}Service->getAll();
+        return {{ ModelName }}Resource::collection(${{ variableName }}s);
+    }
+
+    public function show($id)
+    {
+        ${{ variableName }} = $this->{{ variableName }}Service->getById($id);
+        return new {{ ModelName }}Resource(${{ variableName }});
+    }
+
+    public function store({{ ModelName }}Request $request)
+    {
+        ${{ variableName }} = $this->{{ variableName }}Service->create($request->all());
+        return (new {{ ModelName }}Resource(${{ variableName }}))->response()->setStatusCode(201);
+    }
+
+    public function update({{ ModelName }}Request $request, $id)
+    {
+        ${{ variableName }} = $this->{{ variableName }}Service->update($request->all(), $id);
+        return new {{ ModelName }}Resource(${{ variableName }});
+    }
+
+    public function destroy($id)
+    {
+        $this->{{ variableName }}Service->delete($id);
+        return response()->json(['message' => '{{ ModelName }} deleted successfully'], 204);
+    }
+}

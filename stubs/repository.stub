@@ -1,0 +1,37 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Models\{{ ModelName }};
+
+class {{ ModelName }}Repository
+{
+    public function getAll()
+    {
+        return {{ ModelName }}::all();
+    }
+
+    public function findById($id)
+    {
+        return {{ ModelName }}::findOrFail($id);
+    }
+
+    public function create(array $data)
+    {
+        return {{ ModelName }}::create($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        ${{ variableName }} = $this->findById($id);
+        ${{ variableName }}->update($data);
+        return ${{ variableName }};
+    }
+
+    public function delete($id)
+    {
+        ${{ variableName }} = $this->findById($id);
+        ${{ variableName }}->delete();
+        return ${{ variableName }};
+    }
+}
