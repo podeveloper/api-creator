@@ -3,35 +3,67 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Traits\ExceptionTrait;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository
 {
+    use ExceptionTrait;
+
+    private $model = User::class;
+
     public function getAll()
     {
-        return User::all();
+        try {
+            return $this->model::paginate();
+        } catch (\Exception $e) {
+            $this->throwFetchModelsException($e);
+        }
     }
 
     public function findById($id)
     {
-        return User::findOrFail($id);
+        try {
+            return $this->model::findOrFail($id);
+        } catch (\Exception $e) {
+            $this->throwModelNotFoundException($id);
+        }
     }
 
     public function create(array $data)
     {
-        return User::create($data);
+        try {
+            return $this->model::create($data);
+        } catch (\Exception $e) {
+            $this->throwCreateModelException($e);
+        }
     }
 
     public function update(array $data, $id)
     {
-        $user = $this->findById($id);
-        $user->update($data);
-        return $user;
+        $model = $this->findById($id);
+
+        try {
+            return DB::transaction(function () use ($data, $model) {
+                $model->update($data);
+                return $model;
+            });
+        } catch (\Exception $e) {
+            $this->throwUpdateModelException($id, $e);
+        }
     }
 
     public function delete($id)
     {
-        $user = $this->findById($id);
-        $user->delete();
-        return $user;
+        $model = $this->findById($id);
+
+        try {
+            return DB::transaction(function () use ($model) {
+                $model->delete();
+                return true;
+            });
+        } catch (\Exception $e) {
+            $this->throwDeleteModelException($id, $e);
+        }
     }
 }

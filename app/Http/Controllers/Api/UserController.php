@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\UserService;
+use App\Traits\ResponseTrait;
 
 class UserController extends Controller
 {
+    use ResponseTrait;
+
     protected $userService;
 
     public function __construct(UserService $userService)
@@ -18,31 +22,31 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = $this->userService->getAll();
-        return UserResource::collection($users);
+        $models = $this->userService->getAll();
+        return $this->success(UserResource::collection($models));
     }
 
     public function show($id)
     {
-        $user = $this->userService->getById($id);
-        return new UserResource($user);
+        $model = $this->userService->getById($id);
+        return $this->success(new UserResource($model));
     }
 
-    public function store(UserRequest $request)
+    public function store(StoreUserRequest $request)
     {
-        $user = $this->userService->create($request->all());
-        return (new UserResource($user))->response()->setStatusCode(201);
+        $model = $this->userService->create($request->validated());
+        return $this->created(new UserResource($model));
     }
 
-    public function update(UserRequest $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $user = $this->userService->update($request->all(), $id);
-        return new UserResource($user);
+        $model = $this->userService->update($request->validated(), $id);
+        return $this->updated(new UserResource($model));
     }
 
     public function destroy($id)
     {
         $this->userService->delete($id);
-        return response()->json(['message' => 'User deleted successfully'], 204);
+        return $this->noContent();
     }
 }
