@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (Exception $exception) {
             $status = match (true) {
                 $exception instanceof UnauthorizedException => JsonResponse::HTTP_UNAUTHORIZED,
+                $exception instanceof AccessDeniedHttpException => JsonResponse::HTTP_UNAUTHORIZED,
                 $exception instanceof ValidationException => JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
                 $exception instanceof MethodNotAllowedHttpException => JsonResponse::HTTP_METHOD_NOT_ALLOWED,
                 $exception instanceof NotFoundHttpException => JsonResponse::HTTP_NOT_FOUND,
