@@ -62,7 +62,8 @@ Artisan::command('make:apicontroller {name}', function ($name, ContentCreator $c
 
 Artisan::command('make:api {name}', function ($name) {
     $this->call('make:model', ['name' => $name, '--migration' => true, '--factory' => true, '--seed' => true]);
-    $this->call('make:request', ['name' => $name . 'Request']);
+    $this->call('make:request', ['name' => 'Store' . $name . 'Request']);
+    $this->call('make:request', ['name' => 'Update' . $name . 'Request']);
     $this->call('make:resource', ['name' => $name . 'Resource']);
     $this->call('make:apicontroller', ['name' => $name]);
     $this->call('make:service', ['name' => $name]);

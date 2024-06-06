@@ -3,12 +3,16 @@
 namespace {{ namespace }};
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{{ ModelName }}Request;
+use App\Http\Requests\Store{{ ModelName }}Request;
+use App\Http\Requests\Update{{ ModelName }}Request;
 use App\Http\Resources\{{ ModelName }}Resource;
 use App\Services\{{ ModelName }}Service;
+use App\Traits\ResponseTrait;
 
 class {{ class }} extends Controller
 {
+    use ResponseTrait;
+
     protected ${{ variableName }}Service;
 
     public function __construct({{ ModelName }}Service ${{ variableName }}Service)
@@ -18,31 +22,31 @@ class {{ class }} extends Controller
 
     public function index()
     {
-        ${{ variableName }}s = $this->{{ variableName }}Service->getAll();
-        return {{ ModelName }}Resource::collection(${{ variableName }}s);
+        $models = $this->{{ variableName }}Service->getAll();
+        return $this->success({{ ModelName }}Resource::collection($models));
     }
 
     public function show($id)
     {
-        ${{ variableName }} = $this->{{ variableName }}Service->getById($id);
-        return new {{ ModelName }}Resource(${{ variableName }});
+        $model = $this->{{ variableName }}Service->getById($id);
+        return $this->success(new {{ ModelName }}Resource($model));
     }
 
-    public function store({{ ModelName }}Request $request)
+    public function store(Store{{ ModelName }}Request $request)
     {
-        ${{ variableName }} = $this->{{ variableName }}Service->create($request->all());
-        return (new {{ ModelName }}Resource(${{ variableName }}))->response()->setStatusCode(201);
+        $model = $this->{{ variableName }}Service->create($request->validated());
+        return $this->created(new {{ ModelName }}Resource($model));
     }
 
-    public function update({{ ModelName }}Request $request, $id)
+    public function update(Update{{ ModelName }}Request $request, $id)
     {
-        ${{ variableName }} = $this->{{ variableName }}Service->update($request->all(), $id);
-        return new {{ ModelName }}Resource(${{ variableName }});
+        $model = $this->{{ variableName }}Service->update($request->validated(), $id);
+        return $this->updated(new {{ ModelName }}Resource($model));
     }
 
     public function destroy($id)
     {
         $this->{{ variableName }}Service->delete($id);
-        return response()->json(['message' => '{{ ModelName }} deleted successfully'], 204);
+        return $this->noContent();
     }
 }
